@@ -1,19 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template
-from flask import request
-from flask_flatpages import FlatPages
+import sys
+from flask import Flask, render_template, request, url_for
 
 DEBUG = True
-FLATPAGES_AUTO_RELOAD = DEBUG
-FLATPAGES_EXTENSION = '.md'
-
 app = Flask(__name__)
-app.config.from_object(__name__)
-pages = FlatPages(app)
 
-def tax_calc():
-    deduct_insurance = eval(input('请输入缴纳五险一金后的工资：'))
+def tax_calc(deduct_insurance):
     threshold = 5000
     money = deduct_insurance - threshold
     tax = 0
@@ -28,26 +21,22 @@ def tax_calc():
         (0, 0.03, 0)
     )
 
-
     for table in calc_tables:
         if money > table[0]:
             tax = money * table[1] - table[2]
 
+    after_tax = deduct_insurance - tax
+    return tax, after_tax
 
-    result = f'需要缴纳个税：{tax}, 税后工资：{deduct_insurance - tax}'
-    print(result)
-
-
-
-# @app.route('/tax_calc/', methods=['POST', 'GET'])
-# def index():
-#     if request.method == 'POST':
-
-#     return 'Hello, World!'
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def index():
+    if request.method == 'POST':
+        deduct_insurance = eval(request.form['money'])
+        tax, result = tax_calc(deduct_insurance)
+        return render_template('index.html', TAX = tax, RESULT = result)
     return render_template('index.html')
 
+
 if __name__ == "__main__":
-    app.run(port=8000)
+    app.run()
     

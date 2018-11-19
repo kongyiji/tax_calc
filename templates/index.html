@@ -3,12 +3,18 @@
 <head>
     {% block head %}
     <!-- <link rel="stylesheet" href="style.css" /> -->
-    <title>{% block title %}{% endblock %} - My Webpage</title>
+    <title>{% block title %}{% endblock %} 个税计算 </title>
     {% endblock %}
 </head>
 <body>
     <form method="POST">
-        请输入缴纳五险一金后的工资：
+        请输入缴纳五险一金后的工资：<br>
+        <input type="text" name="money">
+        <input type="submit" value="提交"><br><br>
+        需要缴纳的个税是：
+        <input type="text" name="tax" readonly="readonly" value="{{ TAX }}"><br>
+        税后工资是：
+        <input type="text" name="result" readonly="readonly" value="{{ RESULT }}"><br>
     </form>
 </body>
 </html>
